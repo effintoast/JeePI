@@ -1,11 +1,10 @@
 #Buttons Modified version of http://pygame.org/project-Button+drawer-2541-.html
-import pygame
+import pygame,pygame.gfxdraw
 from pygame.locals import *
 pygame.init()
 
 class MenuOption:
     def create_button(self, surface, color, x, y, text, text_color):
-        global test;
         myFont = pygame.font.SysFont("Calibri", 30)
         myText = myFont.render(text, 1, text_color)
         surface.blit(myText, ((200-myText.get_width()),y))
@@ -27,8 +26,11 @@ class MenuOption:
 
 		
 class ToggleOption:
-    def create_button(self, surface, color, x, y, text, text_color):
-        global test;
+    def create_button(self, surface, color, x, y, text, text_color, BUTTON_ON_COLOR, BUTTON_OFF_COLOR, buttonOptions):
+        if 'status' in buttonOptions:
+            if buttonOptions['status'] == 1:
+                color = (255,255,255)
+                text_color = (8, 8, 8)
         myFont = pygame.font.SysFont("Calibri", 22)
         myText = myFont.render(text, 1, text_color)
         buttonHeight = 110
@@ -36,6 +38,15 @@ class ToggleOption:
         pygame.draw.rect(surface, color, (x,y, buttonWidth, buttonHeight))
         surface.blit(myText, ((buttonWidth/2)-(myText.get_width()/2) + x,(buttonHeight/2)-(myText.get_height()/2) + y))
         self.rect = pygame.Rect(x,y,buttonWidth,buttonHeight)
+		
+        #if 'status' in buttonOptions:
+            #if buttonOptions['status'] == 1:
+                #pygame.gfxdraw.aacircle(surface,(x+10),(y + 10), 5, BUTTON_ON_COLOR)
+                #pygame.gfxdraw.filled_circle(surface,(x+10),(y + 10), 5, BUTTON_ON_COLOR)
+           # else:
+                #pygame.gfxdraw.aacircle(surface,(x+10),(y + 10), 5, BUTTON_OFF_COLOR)
+                #pygame.gfxdraw.filled_circle(surface,(x+10),(y + 10), 5, BUTTON_OFF_COLOR)
+			
         return surface
 
 
