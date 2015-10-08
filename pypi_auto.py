@@ -1,5 +1,6 @@
 import pygame, sys, time, pygame.gfxdraw
 
+from pygame.locals import *
 from pypi_settings import *
 from pypi_buttons import *
 
@@ -7,7 +8,7 @@ from pypi_buttons import *
 pygame.init()
 
 #setup window size
-windowCanvas = pygame.display.set_mode((Settings.WINDOW_WIDTH, Settings.WINDOW_HEIGHT), 0, 32)
+window_canvas = pygame.display.set_mode((Settings.WINDOW_WIDTH, Settings.WINDOW_HEIGHT), 0, 32)
 pygame.display.set_caption(Settings.CAPTION)
 pygame.display.update()
 
@@ -15,29 +16,116 @@ clock = pygame.time.Clock()
 
 
 #our main menu options
-menuOptions = {'lights': 'LIGHTS', 'winch': 'WINCH', 'settings': 'SETTINGS'};
-toggleButtons = {
+menu_options = {'lights': 'LIGHTS', 'winch': 'WINCH', 'settings': 'SETTINGS'};
+toggle_buttons = {
 	'lights': [
-		{'title': 'TOP LIGHTS', 'toggleIO': 21, 'status': 0},
-		{'title': 'REAR LIGHTS', 'toggleIO': 22, 'status': 0},
-		{'title': 'BUMPER LIGHTS', 'toggleIO': 24, 'status': 0},
-		{'title': 'CABIN LIGHTS', 'toggleIO': 26, 'status': 0},
-		{'title': 'TOGGLE ALL', 'toggleIO': 'sys', 'func': 'toggleAll'}
+		{'title': 'TOP LIGHTS', 'func': 'toggle_pin', 'pin': 21, 'pin_state': 0, 'active': 0},
+		{'title': 'REAR LIGHTS', 'func': 'toggle_pin', 'pin': 22, 'pin_state': 0, 'active': 0},
+		{'title': 'BUMPER LIGHTS', 'func': 'toggle_pin', 'pin': 24, 'pin_state': 0, 'active': 0},
+		{'title': 'CABIN LIGHTS', 'func': 'toggle_pin', 'pin': 26, 'pin_state': 0, 'active': 0},
+		{'title': 'TOGGLE ALL', 'func': 'toggle_lights', 'toggle_state': 0, 'active': 0}
 		],
 	'winch': [
-		{'title': 'WINCH OUT', 'toggleIO': 27, 'status': 0},
-		{'title': 'WINCH IN', 'toggleIO': 28, 'status': 0}
+		{'title': 'WINCH OUT', 'func': 'toggle_pin', 'pin': 27, 'pin_state': 0, 'active': 0},
+		{'title': 'WINCH IN', 'func': 'toggle_pin', 'pin': 28, 'pin_state': 0, 'active': 0}
 		]
 	}
 	
-for key, title in menuOptions.iteritems():
-	menuOptions[key] = { 'title': menuOptions[key], 'button': Buttons.MenuOption()}
+for key, data in menu_options.iteritems():
+	menu_options[key] = { 'title': menu_options[key], 'button': MenuOption(), 'active': 0}
+
+def update_button(key, attr, value, section=None):
+	if section == None:
+		section = Settings.CURRENT_PANE
+	toggle_buttons[Settings.CURRENT_PANE][key][attr] = value
 	
+def toggle_pin(key, data):
+	if data['pin_state'] == 0:
+		update_button(key, 'pin_state', 1)
+		update_button(key, 'active', 1)
+	else:
+		update_button(key, 'pin_state', 0)
+		update_button(key, 'active', 0)
+	draw_buttons()
+	
+def toggle_lights(key, data):
+
+	if data['toggle_state'] == 0:
+		update_button(key, 'toggle_state', 1)
+		toggle_state = 1
+	else:
+		update_button(key, 'toggle_state', 0)
+		toggle_state = 0
+		
+	if 'lights' in toggle_buttons:
+		for lkey,ldata in enumerate(toggle_buttons['lights']):
+			if ldata['func'] == 'toggle_pin':
+				update_button(lkey, 'active', toggle_state, 'lights')
+				update_button(lkey, 'pin_state', toggle_state, 'lights')
+				
+	update_button(key, 'active', 1)
+	draw_buttons()
+	time.sleep(.2)
+	update_button(key, 'active', 0)
+	draw_buttons()
+	
+def draw_menu():
+	start = 1
+	for key, data in menu_options.iteritems():
+		menu_color = Settings.MENU_COLOR
+		if key == Settings.CURRENT_PANE:
+			menu_options[key]['active'] = 1
+		else:
+			menu_options[key]['active'] = 0
+		menu_options[key]['button'].create(window_canvas, 40, 50+(start*70), menu_options[key]['title'], menu_options[key])
+		start = start+1
+	pygame.display.flip()
+	
+def draw_buttons():
+	top_offset = 25
+	left_offset = Settings.LEFT_PANE_WIDTH + 25
+	right_cols = 3
+	i = 1
+	if Settings.CURRENT_PANE in toggle_buttons:
+		for key,data in enumerate(toggle_buttons[Settings.CURRENT_PANE]):
+			temp_left_offset = 0;
+			tmp_bg_color = Settings.BUTTON_BG_COLOR
+			tmp_text_color = Settings.BUTTON_TEXT_COLOR
+			if i > 1:
+				temp_left_offset = (155+25) * (i - 1)
+
+			toggle_buttons[Settings.CURRENT_PANE][key]['button'] = ButtonOption()
+			toggle_buttons[Settings.CURRENT_PANE][key]['button'].create(window_canvas, (left_offset+temp_left_offset), top_offset, toggle_buttons[Settings.CURRENT_PANE][key]['title'], toggle_buttons[Settings.CURRENT_PANE][key])
+			i = i + 1;
+			if i > right_cols:
+				i = 1
+				top_offset = top_offset+135;
+		pygame.display.flip()
+	
+def setup_pane():
+	window_canvas.fill(Settings.BG_COLOR)
+	pygame.draw.rect(window_canvas, (44,44,44), (0, 0, 226, 481))
+	pygame.draw.rect(window_canvas, Settings.LEFT_PANE_BG_COLOR, (0, 0, 225, 480))
+	draw_menu()
+	pygame.display.flip()
+
+
+setup_pane()
+draw_buttons()
+
 while True:
 	for event in pygame.event.get():
 		if event.type == QUIT:
 			pygame.quit()
 			sys.exit()
 		elif event.type == MOUSEBUTTONDOWN:
-			print 'mouse'
-	clock.tick(15)
+			for key, data in menu_options.iteritems():
+				if data['button'].pressed(pygame.mouse.get_pos()):
+					Settings.CURRENT_PANE = key
+					setup_pane()
+					draw_buttons()
+			if Settings.CURRENT_PANE in toggle_buttons:
+				for key,data in enumerate(toggle_buttons[Settings.CURRENT_PANE]):
+					if data['button'].pressed(pygame.mouse.get_pos()):
+						globals()[data['func']](key,data)
+	clock.tick(30)
