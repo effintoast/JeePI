@@ -38,14 +38,19 @@ def update_button(key, attr, value, section=None):
 	if section == None:
 		section = Settings.CURRENT_PANE
 	toggle_buttons[Settings.CURRENT_PANE][key][attr] = value
-	
+
+def set_pin_state(pin,state):
+	print "Pin "+str(pin)+" state "+str(state)
+
 def toggle_pin(key, data):
 	if data['pin_state'] == 0:
 		update_button(key, 'pin_state', 1)
 		update_button(key, 'active', 1)
+		set_pin_state(data['pin'],1)
 	else:
 		update_button(key, 'pin_state', 0)
 		update_button(key, 'active', 0)
+		set_pin_state(data['pin'],0)
 	draw_buttons()
 	
 def toggle_lights(key, data):
@@ -62,6 +67,7 @@ def toggle_lights(key, data):
 			if ldata['func'] == 'toggle_pin':
 				update_button(lkey, 'active', toggle_state, 'lights')
 				update_button(lkey, 'pin_state', toggle_state, 'lights')
+				set_pin_state(ldata['pin'], toggle_state)
 				
 	update_button(key, 'active', 1)
 	draw_buttons()
