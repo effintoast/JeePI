@@ -34,14 +34,18 @@ toggle_buttons = {
 for key, data in menu_options.iteritems():
 	menu_options[key] = { 'title': menu_options[key], 'button': MenuOption(), 'active': 0}
 
+#change data on toggle button
 def update_button(key, attr, value, section=None):
 	if section == None:
 		section = Settings.CURRENT_PANE
 	toggle_buttons[Settings.CURRENT_PANE][key][attr] = value
 
+#function for updating pin state
 def set_pin_state(pin,state):
 	print "Pin "+str(pin)+" state "+str(state)
+	#raspi pin change code here.
 
+#button function for standard pin toggle
 def toggle_pin(key, data):
 	if data['pin_state'] == 0:
 		update_button(key, 'pin_state', 1)
@@ -52,7 +56,8 @@ def toggle_pin(key, data):
 		update_button(key, 'active', 0)
 		set_pin_state(data['pin'],0)
 	draw_buttons()
-	
+
+#update all lights status
 def toggle_lights(key, data):
 
 	if data['toggle_state'] == 0:
@@ -74,7 +79,8 @@ def toggle_lights(key, data):
 	time.sleep(.2)
 	update_button(key, 'active', 0)
 	draw_buttons()
-	
+
+#handles drawing of main menu
 def draw_menu():
 	start = 1
 	for key, data in menu_options.iteritems():
@@ -86,7 +92,8 @@ def draw_menu():
 		menu_options[key]['button'].create(window_canvas, 40, 50+(start*70), menu_options[key]['title'], menu_options[key])
 		start = start+1
 	pygame.display.flip()
-	
+
+#draw function for right buttons
 def draw_buttons():
 	top_offset = 25
 	left_offset = Settings.LEFT_PANE_WIDTH + 25
@@ -108,6 +115,7 @@ def draw_buttons():
 				top_offset = top_offset+135;
 		pygame.display.flip()
 	
+#clears right pane, and draws menu
 def setup_pane():
 	window_canvas.fill(Settings.BG_COLOR)
 	pygame.draw.rect(window_canvas, (44,44,44), (0, 0, 226, 481))
@@ -116,6 +124,7 @@ def setup_pane():
 	pygame.display.flip()
 
 
+#initial run
 setup_pane()
 draw_buttons()
 
@@ -125,13 +134,16 @@ while True:
 			pygame.quit()
 			sys.exit()
 		elif event.type == MOUSEBUTTONDOWN:
+			#loop to see if menu item clicked
 			for key, data in menu_options.iteritems():
 				if data['button'].pressed(pygame.mouse.get_pos()):
 					Settings.CURRENT_PANE = key
 					setup_pane()
 					draw_buttons()
+			#loop to see if any toggle buttons are clicked
 			if Settings.CURRENT_PANE in toggle_buttons:
 				for key,data in enumerate(toggle_buttons[Settings.CURRENT_PANE]):
 					if data['button'].pressed(pygame.mouse.get_pos()):
+						#execute button function and pass button info
 						globals()[data['func']](key,data)
 	clock.tick(30)
