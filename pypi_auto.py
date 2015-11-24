@@ -20,15 +20,15 @@ GPIO.setmode(GPIO.BCM)
 menu_options = {'lights': 'LIGHTS', 'winch': 'WINCH', 'settings': 'SETTINGS'};
 toggle_buttons = {
 	'lights': [
-		{'title': 'TOP LIGHTS', 'func': 'toggle_pin', 'pin': 1, 'pin_state': 0, 'active': 0},
-		{'title': 'REAR LIGHTS', 'func': 'toggle_pin', 'pin': 2, 'pin_state': 0, 'active': 0},
-		{'title': 'BUMPER LIGHTS', 'func': 'toggle_pin', 'pin': 3, 'pin_state': 0, 'active': 0},
-		{'title': 'CABIN LIGHTS', 'func': 'toggle_pin', 'pin': 4, 'pin_state': 0, 'active': 0},
+		{'title': 'TOP LIGHTS', 'func': 'toggle_pin', 'pin': 04, 'pin_state': 0, 'active': 0},
+		{'title': 'REAR LIGHTS', 'func': 'toggle_pin', 'pin': 17, 'pin_state': 0, 'active': 0},
+		{'title': 'BUMPER LIGHTS', 'func': 'toggle_pin', 'pin': 27, 'pin_state': 0, 'active': 0},
+		{'title': 'CABIN LIGHTS', 'func': 'toggle_pin', 'pin': 22, 'pin_state': 0, 'active': 0},
 		{'title': 'TOGGLE ALL', 'func': 'toggle_lights', 'toggle_state': 0, 'active': 0}
 		],
 	'winch': [
-		{'title': 'WINCH OUT', 'func': 'toggle_pin', 'pin': 5, 'pin_state': 0, 'active': 0},
-		{'title': 'WINCH IN', 'func': 'toggle_pin', 'pin': 6, 'pin_state': 0, 'active': 0}
+		{'title': 'WINCH OUT', 'func': 'toggle_pin', 'pin': 05, 'pin_state': 0, 'active': 0},
+		{'title': 'WINCH IN', 'func': 'toggle_pin', 'pin': 06, 'pin_state': 0, 'active': 0}
 		]
 	}
 	
