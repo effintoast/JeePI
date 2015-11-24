@@ -1,5 +1,5 @@
 import pygame, sys, time, pygame.gfxdraw
-
+import RPi.GPIO as GPIO
 from pygame.locals import *
 from pypi_settings import *
 from pypi_buttons import *
@@ -14,22 +14,28 @@ pygame.display.update()
 
 clock = pygame.time.Clock()
 
+GPIO.setmode(GPIO.BCM)
 
 #our main menu options
 menu_options = {'lights': 'LIGHTS', 'winch': 'WINCH', 'settings': 'SETTINGS'};
 toggle_buttons = {
 	'lights': [
-		{'title': 'TOP LIGHTS', 'func': 'toggle_pin', 'pin': 21, 'pin_state': 0, 'active': 0},
-		{'title': 'REAR LIGHTS', 'func': 'toggle_pin', 'pin': 22, 'pin_state': 0, 'active': 0},
-		{'title': 'BUMPER LIGHTS', 'func': 'toggle_pin', 'pin': 24, 'pin_state': 0, 'active': 0},
-		{'title': 'CABIN LIGHTS', 'func': 'toggle_pin', 'pin': 26, 'pin_state': 0, 'active': 0},
+		{'title': 'TOP LIGHTS', 'func': 'toggle_pin', 'pin': 1, 'pin_state': 0, 'active': 0},
+		{'title': 'REAR LIGHTS', 'func': 'toggle_pin', 'pin': 2, 'pin_state': 0, 'active': 0},
+		{'title': 'BUMPER LIGHTS', 'func': 'toggle_pin', 'pin': 3, 'pin_state': 0, 'active': 0},
+		{'title': 'CABIN LIGHTS', 'func': 'toggle_pin', 'pin': 4, 'pin_state': 0, 'active': 0},
 		{'title': 'TOGGLE ALL', 'func': 'toggle_lights', 'toggle_state': 0, 'active': 0}
 		],
 	'winch': [
-		{'title': 'WINCH OUT', 'func': 'toggle_pin', 'pin': 27, 'pin_state': 0, 'active': 0},
-		{'title': 'WINCH IN', 'func': 'toggle_pin', 'pin': 28, 'pin_state': 0, 'active': 0}
+		{'title': 'WINCH OUT', 'func': 'toggle_pin', 'pin': 5, 'pin_state': 0, 'active': 0},
+		{'title': 'WINCH IN', 'func': 'toggle_pin', 'pin': 6, 'pin_state': 0, 'active': 0}
 		]
 	}
+	
+for key,data in enumerate(toggle_buttons):
+	for key,data in enumerate(toggle_buttons[data]):
+		if 'pin' in data:
+			GPIO.setup(data['pin'], GPIO.OUT)
 	
 for key, data in menu_options.iteritems():
 	menu_options[key] = { 'title': menu_options[key], 'button': MenuOption(), 'active': 0}
@@ -43,6 +49,10 @@ def update_button(key, attr, value, section=None):
 #function for updating pin state
 def set_pin_state(pin,state):
 	print "Pin "+str(pin)+" state "+str(state)
+	if state == 1:
+		GPIO.output(pin, GPIO.HIGH)
+	else:
+		GPIO.output(pin, GPIO.LOW)
 	#raspi pin change code here.
 
 #button function for standard pin toggle
