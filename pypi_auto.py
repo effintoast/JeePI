@@ -8,7 +8,7 @@ from pypi_buttons import *
 pygame.init()
 
 #setup window size
-window_canvas = pygame.display.set_mode((Settings.WINDOW_WIDTH, Settings.WINDOW_HEIGHT), pygame.FULLSCREEN, 32)
+window_canvas = pygame.display.set_mode((Settings.WINDOW_WIDTH, Settings.WINDOW_HEIGHT), 0, 32)
 pygame.display.set_caption(Settings.CAPTION)
 pygame.display.update()
 
