@@ -1,5 +1,5 @@
 import pygame, sys, time, pygame.gfxdraw
-#import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO
 from pygame.locals import *
 from pypi_settings import *
 from pypi_buttons import *
@@ -14,7 +14,7 @@ pygame.display.update()
 
 clock = pygame.time.Clock()
 
-#GPIO.setmode(GPIO.BCM)
+GPIO.setmode(GPIO.BCM)
 
 #our main menu options
 menu_options = {'lights': 'LIGHTS', 'winch': 'WINCH', 'settings': 'SETTINGS'};
@@ -38,7 +38,7 @@ toggle_buttons = {
 for key,data in enumerate(toggle_buttons):
 	for key,data in enumerate(toggle_buttons[data]):
 		if 'pin' in data:
-			#GPIO.setup(data['pin'], GPIO.OUT)
+			GPIO.setup(data['pin'], GPIO.OUT)
 	
 for key, data in menu_options.iteritems():
 	menu_options[key] = { 'title': menu_options[key], 'button': MenuOption(), 'active': 0}
@@ -53,9 +53,9 @@ def update_button(key, attr, value, section=None):
 def set_pin_state(pin,state):
 	print "Pin "+str(pin)+" state "+str(state)
 	if state == 1:
-		#GPIO.output(pin, GPIO.HIGH)
+		GPIO.output(pin, GPIO.HIGH)
 	else:
-		#GPIO.output(pin, GPIO.LOW)
+		GPIO.output(pin, GPIO.LOW)
 	#raspi pin change code here.
 
 #button function for standard pin toggle
