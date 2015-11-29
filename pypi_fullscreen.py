@@ -53,9 +53,9 @@ def update_button(key, attr, value, section=None):
 def set_pin_state(pin,state):
 	print "Pin "+str(pin)+" state "+str(state)
 	if state == 1:
-		GPIO.output(pin, GPIO.HIGH)
-	else:
 		GPIO.output(pin, GPIO.LOW)
+	else:
+		GPIO.output(pin, GPIO.HIGH)
 	#raspi pin change code here.
 
 #button function for standard pin toggle
