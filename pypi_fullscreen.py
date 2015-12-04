@@ -50,7 +50,7 @@ def toggle_pin(key, data):
 
 	#TODO: CLEAN THIS UP
 	#this is a little messy
-	if data['toggle_off_id']:
+	if 'toggle_off_id' in data:
 		for toggle_id in data['toggle_off_id']:
 			toggle_off_key = get_button_key_by_id(toggle_id)
 			toggle_off_button = get_button_by_id(toggle_id)
@@ -78,7 +78,7 @@ def momentary_pin(key, data):
 	
 	#TODO: CLEAN THIS UP
 	#this is a little messy
-	if data['toggle_off_id']:
+	if 'toggle_off_id' in data:
 		for toggle_id in data['toggle_off_id']:
 			toggle_off_key = get_button_key_by_id(toggle_id)
 			toggle_off_button = get_button_by_id(toggle_id)
