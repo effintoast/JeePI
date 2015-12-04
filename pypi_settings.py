@@ -38,7 +38,7 @@ class Settings:
 			{'title': 'WINCH IN -', 'func': 'momentary_pin', 'pin': 06, 'pin_state': 0, 'active': 0, 'toggle_off_id': ['winch_out','winch_in']}
 			],
 		'settings': [
-			{'title': 'EXIT', 'func': 'exit', 'pin_state': 0, 'active': 0},
+			{'title': 'EXIT', 'func': 'close_app', 'pin_state': 0, 'active': 0},
 			]
 		}
 		

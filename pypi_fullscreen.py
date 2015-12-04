@@ -30,6 +30,10 @@ for key,data in enumerate(toggle_buttons):
 for key, data in menu_options.iteritems():
 	menu_options[key] = { 'title': menu_options[key], 'button': MenuOption(), 'active': 0}
 
+#exit app
+def close_app(key, data):
+	exit()
+
 #change data on toggle button
 def update_button(key, attr, value, section=None):
 	if section == None:
