@@ -17,29 +17,16 @@ clock = pygame.time.Clock()
 GPIO.setmode(GPIO.BCM)
 
 #our main menu options
-menu_options = {'lights': 'LIGHTS', 'winch': 'WINCH', 'settings': 'SETTINGS'};
-toggle_buttons = {
-	'lights': [
-		{'title': 'TOP LIGHTS', 'func': 'toggle_pin', 'pin': 04, 'pin_state': 0, 'active': 0},
-		{'title': 'REAR LIGHTS', 'func': 'toggle_pin', 'pin': 17, 'pin_state': 0, 'active': 0},
-		{'title': 'BUMPER LIGHTS', 'func': 'toggle_pin', 'pin': 27, 'pin_state': 0, 'active': 0},
-		{'title': 'CABIN LIGHTS', 'func': 'toggle_pin', 'pin': 22, 'pin_state': 0, 'active': 0},
-		{'title': 'TOGGLE ALL', 'func': 'toggle_lights', 'toggle_state': 0, 'active': 0}
-		],
-	'winch': [
-		{'title': 'WINCH OUT', 'func': 'toggle_pin', 'pin': 05, 'pin_state': 0, 'active': 0},
-		{'title': 'WINCH IN', 'func': 'toggle_pin', 'pin': 06, 'pin_state': 0, 'active': 0}
-		],
-	'settings': [
-		{'title': 'Exit', 'func': 'exit', 'pin_state': 0, 'active': 0},
-		]
-	}
-	
+menu_options = Settings.MENU_OPTIONS
+toggle_buttons = Settings.TOGGLE_BUTTONS
+momentary_button = False
+
 for key,data in enumerate(toggle_buttons):
 	for key,data in enumerate(toggle_buttons[data]):
 		if 'pin' in data:
 			GPIO.setup(data['pin'], GPIO.OUT)
-	
+			GPIO.output(data['pin'], GPIO.HIGH)
+			
 for key, data in menu_options.iteritems():
 	menu_options[key] = { 'title': menu_options[key], 'button': MenuOption(), 'active': 0}
 
@@ -47,19 +34,33 @@ for key, data in menu_options.iteritems():
 def update_button(key, attr, value, section=None):
 	if section == None:
 		section = Settings.CURRENT_PANE
-	toggle_buttons[Settings.CURRENT_PANE][key][attr] = value
+	toggle_buttons[section][key][attr] = value
 
 #function for updating pin state
 def set_pin_state(pin,state):
 	print "Pin "+str(pin)+" state "+str(state)
 	if state == 1:
-		GPIO.output(pin, GPIO.LOW)
-	else:
 		GPIO.output(pin, GPIO.HIGH)
+	else:
+		GPIO.output(pin, GPIO.LOW)
 	#raspi pin change code here.
 
 #button function for standard pin toggle
 def toggle_pin(key, data):
+
+	#TODO: CLEAN THIS UP
+	#this is a little messy
+	if data['toggle_off_id']:
+		for toggle_id in data['toggle_off_id']:
+			toggle_off_key = get_button_key_by_id(toggle_id)
+			toggle_off_button = get_button_by_id(toggle_id)
+			if toggle_off_button['active'] == 1:
+				update_button(toggle_off_key, 'pin_state', 0)
+				update_button(toggle_off_key, 'active', 0)
+				set_pin_state(toggle_off_button['pin'],0)
+				time.sleep(.2)
+
+			
 	if data['pin_state'] == 0:
 		update_button(key, 'pin_state', 1)
 		update_button(key, 'active', 1)
@@ -70,6 +71,46 @@ def toggle_pin(key, data):
 		set_pin_state(data['pin'],0)
 	draw_buttons()
 
+#button function for momentary pin toggle
+def momentary_pin(key, data):
+
+	global momentary_button
+	
+	#TODO: CLEAN THIS UP
+	#this is a little messy
+	if data['toggle_off_id']:
+		for toggle_id in data['toggle_off_id']:
+			toggle_off_key = get_button_key_by_id(toggle_id)
+			toggle_off_button = get_button_by_id(toggle_id)
+			if toggle_off_button['active'] == 1:
+				update_button(toggle_off_key, 'pin_state', 0)
+				update_button(toggle_off_key, 'active', 0)
+				set_pin_state(toggle_off_button['pin'],0)
+				time.sleep(.2)
+
+	if data['pin_state'] == 0:
+		update_button(key, 'pin_state', 1)
+		update_button(key, 'active', 1)
+		set_pin_state(data['pin'],1)
+		momentary_button = key
+	else:
+		update_button(key, 'pin_state', 0)
+		update_button(key, 'active', 0)
+		set_pin_state(data['pin'],0)
+	draw_buttons()
+
+def get_button_key_by_id(id):
+	for key,data in enumerate(toggle_buttons[Settings.CURRENT_PANE]):
+		if data['id'] == id:
+			return key;
+	return 0;
+	
+def get_button_by_id(id):
+	for key,data in enumerate(toggle_buttons[Settings.CURRENT_PANE]):
+		if data['id'] == id:
+			return data;
+	return {};
+	
 #update all lights status
 def toggle_lights(key, data):
 
@@ -159,4 +200,10 @@ while True:
 					if data['button'].pressed(pygame.mouse.get_pos()):
 						#execute button function and pass button info
 						globals()[data['func']](key,data)
+		elif event.type == MOUSEBUTTONUP:
+			if momentary_button != False:
+				toggle_key = momentary_button
+				toggle_data = toggle_buttons[Settings.CURRENT_PANE][toggle_key]
+				toggle_pin(toggle_key, toggle_data)
+				momentary_button = False
 	clock.tick(30)

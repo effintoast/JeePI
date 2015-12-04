@@ -22,3 +22,21 @@ class Settings:
 	
 	#landing
 	CURRENT_PANE = 'lights'
+	
+	TOGGLE_BUTTONS = {
+		'lights': [
+			{'title': 'TOP LIGHTS', 'func': 'toggle_pin', 'pin': 04, 'pin_state': 0, 'active': 0},
+			{'title': 'REAR LIGHTS', 'func': 'toggle_pin', 'pin': 17, 'pin_state': 0, 'active': 0},
+			{'title': 'BUMPER LIGHTS', 'func': 'toggle_pin', 'pin': 27, 'pin_state': 0, 'active': 0},
+			{'title': 'CABIN LIGHTS', 'func': 'toggle_pin', 'pin': 22, 'pin_state': 0, 'active': 0},
+			{'title': 'TOGGLE ALL', 'func': 'toggle_lights', 'toggle_state': 0, 'active': 0}
+			],
+		'winch': [
+			{'title': 'WINCH OUT', 'func': 'toggle_pin', 'pin': 05, 'pin_state': 0, 'active': 0, 'id': 'winch_out', 'toggle_off_id': ['winch_in']},
+			{'title': 'WINCH IN', 'func': 'toggle_pin', 'pin': 06, 'pin_state': 0, 'active': 0, 'id': 'winch_in', 'toggle_off_id': ['winch_out']},
+			{'title': 'WINCH OUT +', 'func': 'momentary_pin', 'pin': 05, 'pin_state': 0, 'active': 0, 'toggle_off_id': ['winch_out','winch_in']},
+			{'title': 'WINCH IN -', 'func': 'momentary_pin', 'pin': 06, 'pin_state': 0, 'active': 0, 'toggle_off_id': ['winch_out','winch_in']}
+			]
+		}
+		
+	MENU_OPTIONS = {'lights': 'LIGHTS', 'winch': 'WINCH', 'settings': 'SETTINGS'};
