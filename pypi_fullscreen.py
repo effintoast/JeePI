@@ -1,10 +1,5 @@
 import pygame, sys, time, pygame.gfxdraw
-import imp
-try:
-	imp.find_module('RPi.GPIO')
-	import RPi.GPIO as GPIO
-except ImportError:
-    import FakeRPi.GPIO as GPIO
+import RPi.GPIO as GPIO
 from pygame.locals import *
 from pypi_settings import *
 from pypi_buttons import *
