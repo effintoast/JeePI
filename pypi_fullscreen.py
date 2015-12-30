@@ -25,7 +25,7 @@ for key,data in enumerate(toggle_buttons):
 	for key,data in enumerate(toggle_buttons[data]):
 		if 'pin' in data:
 			GPIO.setup(data['pin'], GPIO.OUT)
-			GPIO.output(data['pin'], GPIO.HIGH)
+			GPIO.output(data['pin'], GPIO.LOW)
 			
 for key, data in menu_options.iteritems():
 	menu_options[key] = { 'title': menu_options[key], 'button': MenuOption(), 'active': 0}
@@ -44,9 +44,9 @@ def update_button(key, attr, value, section=None):
 def set_pin_state(pin,state):
 	print "Pin "+str(pin)+" state "+str(state)
 	if state == 1:
-		GPIO.output(pin, GPIO.LOW)
-	else:
 		GPIO.output(pin, GPIO.HIGH)
+	else:
+		GPIO.output(pin, GPIO.LOW)
 	#raspi pin change code here.
 
 #button function for standard pin toggle
